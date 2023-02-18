@@ -21,6 +21,14 @@ import static app.Colors.PANEL_BACKGROUND_COLOR;
  */
 public class Application implements Consumer<Event> {
     /**
+     * Первый заголовок
+     */
+    private final Label label2;
+    /**
+     * Первый заголовок
+     */
+    private final Label label3;
+    /**
      * окно приложения
      */
     private final Window window;
@@ -44,16 +52,23 @@ public class Application implements Consumer<Event> {
         // создаём окно
         window = App.makeWindow();
         // задаём обработчиком событий текущий объект
-        window.setEventListener(this);
-        // задаём заголовок
         window.setTitle("Java 2D");
         // задаём размер окна
         window.setWindowSize(900, 900);
         // задаём его положение
         window.setWindowPosition(100, 100);
         // задаём иконку
+        // создаём второй заголовок
+        label2 = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
+                4, 4, 0, 3, 1, 1, "Второй заголовок", true, true);
+
+        // создаём третий заголовок
+        label3 = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
+                4, 4, 2, 0, 1, 1, "Это тоже заголовок", true, true);
         label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
-                "Привет, мир!", true, true);
+                4, 4, 1, 1, 1, 1, "Привет, мир!", true, true);
+        window.setEventListener(this);
+        // задаём заголовок
 
         switch (Platform.CURRENT) {
             case WINDOWS -> window.setIcon(new File("src/main/resources/windows.ico"));
@@ -110,20 +125,18 @@ public class Application implements Consumer<Event> {
      * @param canvas   низкоуровневый инструмент рисования примитивов от Skija
      * @param windowCS СК окна
      */
-    /**
-     * Рисование
-     *
-     * @param canvas   низкоуровневый инструмент рисования примитивов от Skija
-     * @param windowCS СК окна
-     */
     public void paint(Canvas canvas, CoordinateSystem2i windowCS) {
         // запоминаем изменения (пока что там просто заливка цветом)
         canvas.save();
         // очищаем канвас
         canvas.clear(APP_BACKGROUND_COLOR);
         // рисуем заголовок
+        label.paint(canvas, windowCS);
+        // рисуем второй заголовок
+        label2.paint(canvas, windowCS);
+        // рисуем третий заголовок
+        label3.paint(canvas, windowCS);
+        // восстанавливаем состояние канваса
         canvas.restore();
-        // рисуем заголовок в точке [100,100] с шириной и выостой 200
-        label.paint(canvas, new CoordinateSystem2i(100, 100, 200, 200));
     }
 }
