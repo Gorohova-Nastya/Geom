@@ -40,6 +40,7 @@ public class Application implements Consumer<Event> {
      * отступы панелей
      */
     public Application() {
+
         // создаём окно
         window = App.makeWindow();
         // задаём обработчиком событий текущий объект
@@ -51,7 +52,8 @@ public class Application implements Consumer<Event> {
         // задаём его положение
         window.setWindowPosition(100, 100);
         // задаём иконку
-        label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING, "Привет, мир!");
+        label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
+                "Привет, мир!", true, true);
 
         switch (Platform.CURRENT) {
             case WINDOWS -> window.setIcon(new File("src/main/resources/windows.ico"));
