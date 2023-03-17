@@ -22,6 +22,20 @@ public class PanelRendering extends GridPanel {
      * Представление проблемы
      */
     public static Task task;
+    /**
+     * Сохранить файл
+     */
+    public static void save() {
+        PanelLog.info("save");
+    }
+
+    /**
+     * Загрузить файл
+     */
+    public static void load() {
+        PanelLog.info("load");
+    }
+
 
     /**
      * Панель управления
