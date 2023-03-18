@@ -1,5 +1,6 @@
 package app;
 
+import controls.InputFactory;
 import controls.Label;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.skija.EventFrameSkija;
@@ -19,6 +20,8 @@ import java.util.function.Consumer;
 
 import static app.Colors.APP_BACKGROUND_COLOR;
 import static app.Colors.PANEL_BACKGROUND_COLOR;
+import static io.github.humbleui.jwm.Key.ESCAPE;
+import static io.github.humbleui.jwm.Key.TAB;
 
 /**
  * Класс окна приложения
@@ -173,15 +176,16 @@ public class Application implements Consumer<Event> {
                         case DIGIT2 -> window.setOpacity(window.getOpacity() == 1f ? 0.5f : 1f);
                     }
                 else
-                    switch (eventKey.getKey()) {
-                        case ESCAPE -> {
-                            window.close();
-                            // завершаем обработку, иначе уже разрушенный контекст
-                            // будет передан панелям
-                            return;
+                switch (eventKey.getKey()) {
+                    case ESCAPE -> {
+                        window.close();
+                        // завершаем обработку, иначе уже разрушенный контекст
+                        // будет передан панелям
+                        return;
 
-                        }
                     }
+                    case TAB -> InputFactory.nextTab();
+                }
             }
         }
         panelControl.accept(e);
@@ -206,4 +210,5 @@ public class Application implements Consumer<Event> {
         panelHelp.paint(canvas, windowCS);
         canvas.restore();
     }
+
 }

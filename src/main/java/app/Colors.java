@@ -5,7 +5,10 @@ import misc.Misc;
 /**
  * Класс цветов
  */
-public class Colors {
+public class Colors {    /**
+ * Цвет кнопки
+ */
+public static final int BUTTON_COLOR = Misc.getColor(80, 0, 0, 0);
     /**
      * Цвет подложки поля ввода
      */

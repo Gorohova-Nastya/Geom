@@ -1,14 +1,17 @@
 package panels;
 
+import app.Point;
 import app.Task;
+
 import java.util.ArrayList;
-import controls.Input;
-import controls.InputFactory;
-import controls.Label;
-import controls.MultiLineLabel;
+
+import controls.*;
 import io.github.humbleui.jwm.*;
+import io.github.humbleui.jwm.Event;
+import io.github.humbleui.jwm.Window;
 import io.github.humbleui.skija.Canvas;
 import misc.CoordinateSystem2i;
+import misc.Vector2d;
 import misc.Vector2i;
 
 import java.util.List;
@@ -33,7 +36,10 @@ public class PanelControl extends GridPanel {
      * Поля ввода
      */
     public List<Input> inputs;
-
+    /**
+     * Кнопки
+     */
+    public List<Button> buttons;
     /**
      * Панель управления
      *
@@ -57,7 +63,7 @@ public class PanelControl extends GridPanel {
         // создаём списки
         inputs = new ArrayList<>();
         labels = new ArrayList<>();
-
+        buttons = new ArrayList<>();
         // задание
         task = new MultiLineLabel(
                 window, false, backgroundColor, PANEL_PADDING,
@@ -69,17 +75,57 @@ public class PanelControl extends GridPanel {
         labels.add(xLabel);
         Input xField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
                 6, 7, 1, 2, 2, 1, "0.0", true,
-                FIELD_TEXT_COLOR);
+                FIELD_TEXT_COLOR, true);
         inputs.add(xField);
         Label yLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
                 6, 7, 3, 2, 1, 1, "Y", true, true);
         labels.add(yLabel);
         Input yField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
                 6, 7, 4, 2, 2, 1, "0.0", true,
-                FIELD_TEXT_COLOR);
+                FIELD_TEXT_COLOR, true);
         inputs.add(yField);
+
+        Button addToFirstSet = new Button(
+                window, false, backgroundColor, PANEL_PADDING,
+                6, 7, 0, 3, 3, 1, "Добавить в первое\nмножество",
+                true, true);
+        addToFirstSet.setOnClick(() -> {
+            // если числа введены верно
+            if (!xField.hasValidDoubleValue()) {
+                PanelLog.warning("X координата введена неверно");
+            } else if (!yField.hasValidDoubleValue())
+                PanelLog.warning("Y координата введена неверно");
+            else
+                PanelRendering.task.addPoint(
+                        new Vector2d(xField.doubleValue(), yField.doubleValue()), Point.PointSet.FIRST_SET
+                );
+        });
+        buttons.add(addToFirstSet);
+
+        Button addToSecondSet = new Button(
+                window, false, backgroundColor, PANEL_PADDING,
+                6, 7, 3, 3, 3, 1, "Добавить во второе\nмножество",
+                true, true);
+        addToSecondSet.setOnClick(() -> {
+            // если числа введены верно
+            if (!xField.hasValidDoubleValue()) {
+                PanelLog.warning("X координата введена неверно");
+            } else if (!yField.hasValidDoubleValue())
+                PanelLog.warning("Y координата введена неверно");
+            else {
+                PanelRendering.task.addPoint(
+                        new Vector2d(xField.doubleValue(), yField.doubleValue()), Point.PointSet.SECOND_SET
+                );
+            }
+        });
+        buttons.add(addToSecondSet);
     }
 
+    /**
+     * Обработчик событий
+     *
+     * @param e событие
+     */
     /**
      * Обработчик событий
      *
@@ -94,12 +140,22 @@ public class PanelControl extends GridPanel {
             for (Input input : inputs)
                 input.accept(ee);
 
+            for (Button button : buttons) {
+                if (lastWindowCS != null)
+                    button.checkOver(lastWindowCS.getRelativePos(new Vector2i(ee)));
+            }
             // событие нажатия мыши
         } else if (e instanceof EventMouseButton ee) {
-            if (!lastInside || !ee.isPressed())
+            if (!lastInside)
                 return;
 
             Vector2i relPos = lastWindowCS.getRelativePos(lastMove);
+
+            // пробуем кликнуть по всем кнопкам
+            for (Button button : buttons) {
+                if (ee.isPressed())
+                    button.click(relPos);
+            }
 
             // перебираем поля ввода
             for (Input input : inputs) {
@@ -148,6 +204,10 @@ public class PanelControl extends GridPanel {
         // выводим поля ввода
         for (Label label : labels) {
             label.paint(canvas, windowCS);
+        }
+        // выводим кнопки
+        for (Button button : buttons) {
+            button.paint(canvas, windowCS);
         }
     }
 }
